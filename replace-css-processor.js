@@ -1,36 +1,9 @@
 'use strict';
 
 var reduceUrls = require('./node_modules/clean-css/lib/urls/reduce');
+var helpers = require('./helpers');
 var path = require('path');
 var url = require('url');
-
-function isAbsolute(uri) {
-    return uri[0] == '/';
-}
-
-function isSVGMarker(uri) {
-    return uri[0] == '#';
-}
-
-function isEscaped(uri) {
-    return uri.indexOf('__ESCAPED_URL_CLEAN_CSS__') === 0;
-}
-
-function isInternal(uri) {
-    return /^\w+:\w+/.test(uri);
-}
-
-function isRemote(uri) {
-    return /^[^:]+?:\/\//.test(uri) || uri.indexOf('//') === 0;
-}
-
-function isImport(uri) {
-    return uri.lastIndexOf('.css') === uri.length - 4;
-}
-
-function isData(uri) {
-    return uri.indexOf('data:') === 0;
-}
 
 function replaceUriPrefix(uri, options)
 {
@@ -56,10 +29,10 @@ function replaceUriPrefix(uri, options)
 }
 
 function replace(uri, options) {
-    if (isAbsolute(uri) || isSVGMarker(uri) || isEscaped(uri) || isInternal(uri) || /*isImport(uri) || */isRemote(uri))
+    if (helpers.isAbsolute(uri) || helpers.isSVGMarker(uri) || helpers.isEscaped(uri) || helpers.isInternal(uri) || /*helpers.isImport(uri) || */helpers.isRemote(uri))
         return uri;
 
-    if (isData(uri))
+    if (helpers.isData(uri))
         return '\'' + uri + '\'';
 
     if (options.fromBase === false) {
@@ -67,17 +40,6 @@ function replace(uri, options) {
     } else {
         return path.relative(options.fromBase, replaceUriPrefix(path.join(options.fromBase || '', uri), options));
     }
-}
-
-function quoteFor(url) {
-    if (url.indexOf('\'') > -1)
-        return '"';
-    else if (url.indexOf('"') > -1)
-        return '\'';
-    else if (/\s/.test(url) || /[\(\)]/.test(url))
-        return '\'';
-    else
-        return '';
 }
 
 function RebaseCssProcessor(options) {
@@ -110,7 +72,7 @@ RebaseCssProcessor.prototype = {
             if (!!options.urlQuotes && match && match[2] === match[3]) {
                 quote = match[2];
             } else {
-                quote = quoteFor(url);
+                quote = helpers.quoteFor(url);
             }
             tempData.push('url(' + quote + replace(url, options) + quote + ')');
         });
