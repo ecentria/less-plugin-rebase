@@ -1,4 +1,4 @@
-var rebaseUrls = require('./node_modules/clean-css/lib/urls/rebase');
+var rebaseUrls = require('clean-css/lib/urls/rebase');
 
 function RebaseCssProcessor(options) {
     this.context = {

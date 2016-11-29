@@ -1,6 +1,6 @@
 'use strict';
 
-var reduceUrls = require('./node_modules/clean-css/lib/urls/reduce');
+var reduceUrls = require('clean-css/lib/urls/reduce');
 var path = require('path');
 var url = require('url');
 var fs = require('fs');
